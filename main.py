@@ -128,12 +128,14 @@ class RewriteOpenvpnConfig(object):
                 if dr_name == SERVER_NAME:
                     if str_na not in push_na:
                         push_na[str_na] = IPy.IP(str_na)
-                    if str_na not in route_na:
-                        route_na[str_na] = IPy.IP(str_na)
                 else:
                     _nas = iroute_na[dr_name]
                     if str_na not in _nas:
                         _nas[str_na] = IPy.IP(str_na)
+                    if str_na not in push_na:
+                        push_na[str_na] = IPy.IP(str_na)
+                    if str_na not in route_na:
+                        route_na[str_na] = IPy.IP(str_na)
 
         self.result_push_lines.extend(
             ['push "route %s %s"' % (na.strNormal(0), na.netmask()) for na in push_na.itervalues()])
@@ -152,7 +154,7 @@ class RewriteOpenvpnConfig(object):
 
         push_lines = []
         route_lines = []
-        iroute_config = {key: list() for key in route_config.iterkeys() if key != SERVER_NAME}
+        iroute_config = {key: list() for key in self.route_config.iterkeys() if key != SERVER_NAME}
 
         def init_iroute(ccd_value):
             assert isinstance(ccd_value, basestring)
