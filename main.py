@@ -13,6 +13,7 @@ import os
 import os.path
 import IPy
 from collections import OrderedDict, defaultdict
+import re
 
 
 SERVER_NAME = 'server'
@@ -25,6 +26,21 @@ route_config = {
         # iptables -t nat -A POSTROUTING -s 10.9.0.0/24 -o eth0 -j MASQUERADE
         # 其中10.9.0.0/24 为openvpn.conf中的：server 10.9.0.0 255.255.255.0
         '192.168.0.0/16',
+        # AS45062
+        '106.2.32.0/19',
+        '106.2.64.0/19',
+        '106.2.96.0/19',
+        '114.113.196.0/22',
+        '114.113.200.0/22',
+        '123.58.160.0/19',
+        '223.252.192.0/19',
+        '42.8.0.0/16',
+        '60.233.0.0/16',
+        # AS4808
+        '123.125.0.0/16',
+        '115.236.112.0/20',
+        '106.108.0.0/15',
+        '218.107.55.207/32',
     ],
     SERVER_NAME: [
         # vpn访问服务器的地址，有两种方式，一种是全局的：
@@ -117,6 +133,9 @@ class RewriteOpenvpnConfig(object):
             return
         _text = _line[_line.find('route')+5:].strip(' ')
         _tmp = [_item for _item in _text.split(' ') if _item]
+        if not len(_tmp) == 2:
+            return
+        _tmp = [_item for _item in _tmp if re.match('[\\d.]+', _item)]
         if not len(_tmp) == 2:
             return
         return _tmp
